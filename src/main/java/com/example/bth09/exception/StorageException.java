@@ -1,4 +1,4 @@
-package com.example.bth07.exception;
+package com.example.bth09.exception;
 
 public class StorageException extends RuntimeException {
     private static final long serialVersionUID = 1L;

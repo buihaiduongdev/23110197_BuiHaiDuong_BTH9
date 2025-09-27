@@ -1,12 +1,13 @@
-package com.example.bth07.controller;
+package com.example.bth09.controller;
 
-import com.example.bth07.entity.User;
-import com.example.bth07.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
+
+import com.example.bth09.entity.User;
+import com.example.bth09.service.UserService;
 
 import java.util.List;
 

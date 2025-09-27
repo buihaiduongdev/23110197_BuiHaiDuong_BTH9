@@ -1,8 +1,9 @@
-package com.example.bth07.repository;
+package com.example.bth09.repository;
 
-import com.example.bth07.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.example.bth09.entity.Product;
 
 import java.util.List;
 

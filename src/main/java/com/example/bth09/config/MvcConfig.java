@@ -1,4 +1,4 @@
-package com.example.bth07.config;
+package com.example.bth09.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
