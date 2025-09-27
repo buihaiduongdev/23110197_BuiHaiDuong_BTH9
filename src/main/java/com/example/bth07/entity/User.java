@@ -1,56 +1,40 @@
 package com.example.bth07.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Data;
+
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+@Data
 @Entity
-@Table(name = "Users")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Column(nullable = false)
+    private String fullname;
 
-	@Column(unique = true)
-	private String username;
+    @Column(unique = true, nullable = false)
+    private String email;
 
-	private String password;
-
-	private String fullName;
-	private String email;
-
-	@Column(name = "phone_number")
-	private String phone;
-
-	@Enumerated(EnumType.STRING)
-	private Role role;
-
-	@OneToMany(mappedBy = "createdBy", fetch = FetchType.LAZY)
+    @Column(nullable = false)
     @JsonIgnore
-	private Set<Category> categories;
+    private String password;
 
-	public enum Role {
-		admin, manager, user
-	}
+    private String phone;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private Set<Product> products;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_category",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
 }

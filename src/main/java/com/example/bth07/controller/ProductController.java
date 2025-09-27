@@ -1,113 +1,53 @@
 package com.example.bth07.controller;
 
 import com.example.bth07.entity.Product;
-import com.example.bth07.service.CategoryService;
-import com.example.bth07.service.FileStorageService;
 import com.example.bth07.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.validation.Valid;
-import java.util.Optional;
+import java.util.List;
 
 @Controller
-@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private CategoryService categoryService;
-
-    @Autowired
-    private FileStorageService fileStorageService;
-
-    @GetMapping
-    public String listProducts(Model model) {
-        model.addAttribute("products", productService.findAll());
-        return "products/list";
+    @QueryMapping
+    public List<Product> products() {
+        return productService.getProducts();
     }
 
-    @GetMapping("/search")
-    public String searchProducts(@RequestParam("keyword") String keyword, Model model) {
-        model.addAttribute("products", productService.search(keyword));
-        return "products/list";
+    @QueryMapping
+    public Product product(@Argument Long id) {
+        return productService.getProduct(id);
     }
 
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("product", new Product());
-        model.addAttribute("categories", categoryService.findAll());
-        return "products/form";
+    @QueryMapping
+    public List<Product> productsByPrice() {
+        return productService.getProductsByPrice();
     }
 
-    @PostMapping("/add")
-    public String addProduct(@Valid @ModelAttribute("product") Product product, 
-                             BindingResult result, 
-                             @RequestParam("imageFile") MultipartFile imageFile, 
-                             Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("categories", categoryService.findAll());
-            return "products/form";
-        }
-
-        if (!imageFile.isEmpty()) {
-            String imageUrl = fileStorageService.storeFile(imageFile);
-            product.setImages(imageUrl);
-        }
-
-        productService.save(product);
-        return "redirect:/products";
+    @QueryMapping
+    public List<Product> productsByCategory(@Argument Long categoryId) {
+        return productService.getProductsByCategory(categoryId);
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model) {
-        Product product = productService.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + id));
-        model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.findAll());
-        return "products/form";
+    @MutationMapping
+    public Product createProduct(@Argument String title, @Argument int quantity, @Argument String desc, @Argument double price, @Argument Long userId, @Argument Long categoryId) {
+        return productService.createProduct(title, quantity, desc, price, userId, categoryId);
     }
 
-    @PostMapping("/edit/{id}")
-    public String updateProduct(@PathVariable("id") Long id, 
-                                @Valid @ModelAttribute("product") Product product, 
-                                BindingResult result, 
-                                @RequestParam("imageFile") MultipartFile imageFile,
-                                Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("categories", categoryService.findAll());
-            product.setId(id);
-            return "products/form";
-        }
-
-        Optional<Product> optionalProduct = productService.findById(id);
-        if (optionalProduct.isPresent()) {
-            Product existingProduct = optionalProduct.get();
-
-            if (!imageFile.isEmpty()) {
-                String imageUrl = fileStorageService.storeFile(imageFile);
-                product.setImages(imageUrl);
-            } else {
-                product.setImages(existingProduct.getImages());
-            }
-        } else {
-             throw new IllegalArgumentException("Invalid product Id:" + id);
-        }
-
-        product.setId(id);
-        productService.save(product);
-        return "redirect:/products";
+    @MutationMapping
+    public Product updateProduct(@Argument Long id, @Argument String title, @Argument int quantity, @Argument String desc, @Argument double price, @Argument Long userId, @Argument Long categoryId) {
+        return productService.updateProduct(id, title, quantity, desc, price, userId, categoryId);
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable("id") Long id) {
-        productService.deleteById(id);
-        return "redirect:/products";
+    @MutationMapping
+    public boolean deleteProduct(@Argument Long id) {
+        return productService.deleteProduct(id);
     }
 }

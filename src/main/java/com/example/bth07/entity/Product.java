@@ -1,46 +1,34 @@
 package com.example.bth07.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "products")
+@Table(name = "Product")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Product {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(nullable = false)
-	private String productName;
+    private String title;
 
-	private double unitPrice;
+    private int quantity;
 
-	private int quantity;
+    @Column(name = "description")
+    private String desc;
 
-	@Column(length = 1000)
-	private String images; // Can be a single filename or a list of filenames separated by comma
+    private double price;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "category_id")
-    @JsonBackReference("category-product")
     private Category category;
-
 }
